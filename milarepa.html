@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23333'/><text x='50' y='68' font-family='Georgia,serif' font-size='48' font-weight='bold' fill='%23e8e4dc' text-anchor='middle'>SS</text></svg>">
+  <title>Milarepa Network Analysis</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Georgia, serif;
+      background-color: #e8e4dc;
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 760px;
+      margin: 0 auto;
+      padding: 120px 60px;
+    }
+
+    nav {
+      margin-bottom: 30px;
+      border-bottom: 1px solid #999;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 3px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #555;
+      font-size: 0.85rem;
+      padding: 5px 16px;
+      background-color: transparent;
+      border: 1px solid #999;
+      border-bottom: none;
+      border-radius: 3px 3px 0 0;
+      position: relative;
+      top: 1px;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: crimson;
+    }
+
+    nav a.active {
+      background-color: #e8e4dc;
+      border-bottom: 1px solid #e8e4dc;
+      color: #333;
+    }
+
+    /* ── Typography ────────────────────────────────── */
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+      font-weight: normal;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 48px;
+    }
+
+    .intro {
+      font-size: 0.95rem;
+      margin-bottom: 72px;
+    }
+
+    .intro p {
+      margin-bottom: 10px;
+    }
+
+    .section {
+      margin-bottom: 72px;
+    }
+
+    h2 {
+      font-size: 1.05rem;
+      font-weight: normal;
+      margin-bottom: 4px;
+      letter-spacing: 0.01em;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+    }
+
+    .prose {
+      font-size: 0.92rem;
+      margin-bottom: 24px;
+    }
+
+    .prose p {
+      margin-bottom: 10px;
+    }
+
+    /* ── Data tables ───────────────────────────────── */
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-bottom: 24px;
+    }
+
+    .data-table thead tr {
+      border-bottom: 1px solid #bbb;
+    }
+
+    .data-table thead th {
+      text-align: left;
+      padding: 4px 8px 6px 0;
+      color: #888;
+      font-weight: normal;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .data-table thead th.num {
+      text-align: right;
+    }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid #d5d0c8;
+      transition: background-color 0.15s;
+    }
+
+    .data-table tbody tr:hover {
+      background-color: #ddd9d0;
+    }
+
+    .data-table tbody td {
+      padding: 5px 8px 5px 0;
+      color: #333;
+    }
+
+    .data-table tbody td.num {
+      text-align: right;
+      color: #666;
+      font-size: 0.80rem;
+    }
+
+    .data-table tbody td.rank {
+      color: #aaa;
+      font-size: 0.75rem;
+      width: 28px;
+    }
+
+    .data-table tbody td.highlight {
+      color: crimson;
+    }
+
+    /* ── Two-column table layout ───────────────────── */
+
+    .table-row {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    .table-row .table-block {
+      flex: 1;
+    }
+
+    .table-caption {
+      font-size: 0.75rem;
+      color: #999;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Stat cards ────────────────────────────────── */
+
+    .stat-row {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background-color: #ddd9d0;
+      border-radius: 4px;
+      padding: 14px 18px;
+    }
+
+    .stat-card .stat-value {
+      font-size: 1.5rem;
+      font-weight: normal;
+      color: #333;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-card .stat-label {
+      font-size: 0.73rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    /* ── Images ────────────────────────────────────── */
+
+    .chart-wrap {
+      margin-bottom: 24px;
+    }
+
+    .chart-wrap img {
+      width: 100%;
+      border-radius: 4px;
+      display: block;
+    }
+
+    .chart-caption {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    /* ── Edge weight highlight ─────────────────────── */
+
+    .pair-table tbody td.pair-a {
+      color: #555;
+    }
+
+    .pair-table tbody td.weight {
+      color: crimson;
+      text-align: right;
+    }
+
+    /* ── Temporal table ────────────────────────────── */
+
+    .temporal-table td.top-pr {
+      font-size: 0.78rem;
+      color: #777;
+    }
+
+    /* ── Path display ──────────────────────────────── */
+
+    .path-list {
+      font-size: 0.83rem;
+      margin-bottom: 24px;
+    }
+
+    .path-item {
+      display: flex;
+      align-items: baseline;
+      border-bottom: 1px solid #d5d0c8;
+      padding: 6px 0;
+      gap: 16px;
+    }
+
+    .path-item .path-pair {
+      min-width: 240px;
+      color: #333;
+    }
+
+    .path-item .path-dist {
+      color: crimson;
+      font-size: 0.78rem;
+      min-width: 60px;
+    }
+
+    .path-item .path-route {
+      color: #888;
+      font-size: 0.78rem;
+      font-style: italic;
+    }
+
+    /* ── Quote ─────────────────────────────────────── */
+
+    .quote {
+      margin-top: 100px;
+      font-size: 0.8rem;
+      color: #888;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .quote-source {
+      margin-top: 6px;
+      font-style: normal;
+      color: #999;
+    }
+
+    /* ── Divider ───────────────────────────────────── */
+
+    .divider {
+      border: none;
+      border-top: 1px solid #ccc8bf;
+      margin: 64px 0;
+    }
+
+    /* ── Dialogue speaker row ──────────────────────── */
+
+    .dialogue-wrap {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    .dialogue-block {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <div class="nav-tabs">
+        <a href="milarepa.html" class="active">Milarepa</a>
+      </div>
+    </nav>
+
+    <h1>Network Analysis of the <em>Life of Milarepa</em></h1>
+    <div class="subtitle">Sangye Sherpa · Wesleyan University · 2026</div>
+
+    <!-- ── Introduction ──────────────────────────────────── -->
+    <div class="intro">
+      <p>This project applies network analysis to a tagged dataset of the text (16,898 rows, 2,647 unique text units) to explore the structure, characters, and connections across the work. 
+        The analysis covers twelve methods (degree centrality, betweenness, shortest paths, closeness, eccentricity, clustering, pageRank, weighted edges, temporal evolution, place networks, and dialogue structure) each run against character co-occurrence, place co-occurrence, and directed speech graphs built annotations. This display and summary of data is in complement to the Nodegoat views for each respective method.</p>
+    </div>
+
+    <!-- ── Dataset overview ──────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">The Network</div>
+      <h2>What was built</h2>
+
+      <div class="stat-row" style="margin-top: 16px;">
+        <div class="stat-card">
+          <div class="stat-value">2,647</div>
+          <div class="stat-label">Text units</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">75</div>
+          <div class="stat-label">Characters</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">142</div>
+          <div class="stat-label">Places</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">14</div>
+          <div class="stat-label">Chapters</div>
+        </div>
+      </div>
+
+      <div class="prose">
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 1. Degree Centrality ─────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis I</div>
+      <h2>Degree Centrality</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>Degree centrality measures what fraction of all other nodes a given node is directly connected to. In a co-occurrence graph, a high degree means appearing alongside many distinct characters, which indicates broad narrative presence rather than deep local embeddedness.</p>
+      </div>
+
+      <div class="table-row">
+        <div class="table-block">
+          <div class="table-caption">Characters — degree centrality</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Character</th><th class="num">Score</th><th class="num">Partners</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Milarepa</td><td class="num">0.973</td><td class="num">72</td></tr>
+              <tr><td class="rank">2</td><td>Rechungpa Dorjé Drak</td><td class="num">0.487</td><td class="num">36</td></tr>
+              <tr><td class="rank">3</td><td>Marpa</td><td class="num">0.419</td><td class="num">31</td></tr>
+              <tr><td class="rank">4</td><td>Dampa Gyakpuwa</td><td class="num">0.297</td><td class="num">22</td></tr>
+              <tr><td class="rank">5</td><td>Seban Repa</td><td class="num">0.284</td><td class="num">21</td></tr>
+              <tr><td class="rank">6</td><td>Repa Zhiwa Ö</td><td class="num">0.284</td><td class="num">21</td></tr>
+              <tr><td class="rank">7</td><td>Drigom Repa</td><td class="num">0.270</td><td class="num">20</td></tr>
+              <tr><td class="rank">8</td><td>Ngandzong Repa</td><td class="num">0.270</td><td class="num">20</td></tr>
+              <tr><td class="rank">9</td><td>Nyangtsa Kargyen</td><td class="num">0.257</td><td class="num">19</td></tr>
+              <tr><td class="rank">10</td><td>Shengom Repa</td><td class="num">0.243</td><td class="num">18</td></tr>
+              <tr><td class="rank">11</td><td>Dakmema</td><td class="num">0.216</td><td class="num">16</td></tr>
+              <tr><td class="rank">12</td><td>Repa Sangyé Kyap</td><td class="num">0.216</td><td class="num">16</td></tr>
+              <tr><td class="rank">13</td><td>Maitrīpa</td><td class="num">0.176</td><td class="num">13</td></tr>
+              <tr><td class="rank">14</td><td>Nāropa</td><td class="num">0.162</td><td class="num">12</td></tr>
+              <tr><td class="rank">15</td><td>Peta Gönkyi</td><td class="num">0.162</td><td class="num">12</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-block">
+          <div class="table-caption">Places — degree centrality</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Place</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Drin</td><td class="num">0.496</td></tr>
+              <tr><td class="rank">2</td><td>Lapchi Gangra</td><td class="num">0.489</td></tr>
+              <tr><td class="rank">3</td><td>Nyanam</td><td class="num">0.397</td></tr>
+              <tr><td class="rank">4</td><td>Gang Tisé</td><td class="num">0.369</td></tr>
+              <tr><td class="rank">5</td><td>Dröpa Puk</td><td class="num">0.369</td></tr>
+              <tr><td class="rank">6</td><td>Drakar Taso</td><td class="num">0.340</td></tr>
+              <tr><td class="rank">7</td><td>Chonglung Kyungi Dzong</td><td class="num">0.340</td></tr>
+              <tr><td class="rank">8</td><td>Chubar</td><td class="num">0.312</td></tr>
+              <tr><td class="rank">9</td><td>Driché Puk</td><td class="num">0.298</td></tr>
+              <tr><td class="rank">10</td><td>Üma Dzong</td><td class="num">0.298</td></tr>
+              <tr><td class="rank">11</td><td>Kyipuk Nyima Dzong</td><td class="num">0.298</td></tr>
+              <tr><td class="rank">12</td><td>Kutang</td><td class="num">0.298</td></tr>
+              <tr><td class="rank">13</td><td>Düdül Puk</td><td class="num">0.277</td></tr>
+              <tr><td class="rank">14</td><td>Tsa</td><td class="num">0.270</td></tr>
+              <tr><td class="rank">15</td><td>Ösal Puk</td><td class="num">0.270</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <img src="network_output/01_char_degree.png" alt="Character network — degree centrality">
+        <div class="chart-caption">Character co-occurrence network, node size and color scaled to degree centrality. Top 40 nodes shown.</div>
+      </div>
+
+      <div class="prose">
+        <p>Milarepa's degree centrality of 0.973 means he shares at least one text unit with 72 of the 74 nodes in the largest component. The two characters he does not directly co-occur with are among the most peripheral in the graph. Rechungpa Dorjé Drak ranks second at 0.487, co-occurring with 36 distinct characters. Marpa follows at 0.419. Ranks four through ten show a tighter grouping between 0.243 and 0.297, reflecting a set of figures who appear across a similar range of co-occurrence partners.</p>
+        <p>In the place graph, Drin and Lapchi Gangra hold the top two positions at 0.496 and 0.489, meaning each co-occurs with just under half of all other places in the network. The remaining top places range from 0.270 to 0.397.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 2. Betweenness ───────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis II</div>
+      <h2>Betweenness Centrality</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>Betweenness centrality counts what fraction of all shortest paths between any two nodes in the graph pass through a given node. A node with high betweenness is a structural broker. Removing it makes large parts of the network less connected or effectively disconnected. The weighted version uses co-occurrence count as edge weight and penalizes paths through rarely-shared relationships.</p>
+      </div>
+
+      <div class="table-row">
+        <div class="table-block">
+          <div class="table-caption">Characters — unweighted betweenness</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Character</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Milarepa</td><td class="num">0.6526</td></tr>
+              <tr><td class="rank">2</td><td>Rechungpa Dorjé Drak</td><td class="num">0.0793</td></tr>
+              <tr><td class="rank">3</td><td>Marpa</td><td class="num">0.0503</td></tr>
+              <tr><td class="rank">4</td><td>Mila Dorjé Sengé</td><td class="num">0.0295</td></tr>
+              <tr><td class="rank">5</td><td>Nyangtsa Kargyen</td><td class="num">0.0238</td></tr>
+              <tr><td class="rank">6</td><td>Dampa Gyakpuwa</td><td class="num">0.0208</td></tr>
+              <tr><td class="rank">7</td><td>Dakmema</td><td class="num">0.0093</td></tr>
+              <tr><td class="rank">8</td><td>Yungdrung Gyaltsen</td><td class="num">0.0091</td></tr>
+              <tr><td class="rank">9</td><td>Shengom Repa</td><td class="num">0.0088</td></tr>
+              <tr><td class="rank">10</td><td>Seban Repa</td><td class="num">0.0085</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-block">
+          <div class="table-caption">Characters — weighted betweenness</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Character</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Milarepa</td><td class="num">0.4063</td></tr>
+              <tr><td class="rank">2</td><td class="highlight">Marpa</td><td class="num">0.1720</td></tr>
+              <tr><td class="rank">3</td><td>Maitrīpa</td><td class="num">0.1337</td></tr>
+              <tr><td class="rank">4</td><td>Rechungpa Dorjé Drak</td><td class="num">0.1284</td></tr>
+              <tr><td class="rank">5</td><td>Dampa Gyakpuwa</td><td class="num">0.0867</td></tr>
+              <tr><td class="rank">6</td><td>Yungdrung Gyaltsen</td><td class="num">0.0745</td></tr>
+              <tr><td class="rank">7</td><td>Darma Wangchuk</td><td class="num">0.0604</td></tr>
+              <tr><td class="rank">8</td><td>Mila Dorjé Sengé</td><td class="num">0.0490</td></tr>
+              <tr><td class="rank">9</td><td>Akṣobhya</td><td class="num">0.0457</td></tr>
+              <tr><td class="rank">10</td><td>Marpa Golek</td><td class="num">0.0382</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-row">
+        <div class="table-block">
+          <div class="table-caption">Places — betweenness (structural bridges)</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Place</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td>Ü Tsang</td><td class="num">0.1826</td></tr>
+              <tr><td class="rank">2</td><td class="highlight">Drin</td><td class="num">0.1451</td></tr>
+              <tr><td class="rank">3</td><td>Lhodrak</td><td class="num">0.1106</td></tr>
+              <tr><td class="rank">4</td><td>Lapchi Gangra</td><td class="num">0.1064</td></tr>
+              <tr><td class="rank">5</td><td>Drowolung</td><td class="num">0.0996</td></tr>
+              <tr><td class="rank">6</td><td>Chubar</td><td class="num">0.0952</td></tr>
+              <tr><td class="rank">7</td><td>Nyanam</td><td class="num">0.0708</td></tr>
+              <tr><td class="rank">8</td><td>Dröpa Puk</td><td class="num">0.0485</td></tr>
+              <tr><td class="rank">9</td><td>Drakar Taso</td><td class="num">0.0484</td></tr>
+              <tr><td class="rank">10</td><td>Kyangatsa</td><td class="num">0.0474</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-block" style="display:flex; align-items:center; justify-content:center;">
+          <div style="background:#ddd9d0; border-radius:4px; padding:20px 24px; font-size:0.85rem; color:#555; line-height:1.7;">
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; color:#999; margin-bottom:10px;">Key ratio</div>
+            Milarepa's betweenness (0.653) is<br>
+            <span style="color:crimson;">8.2×</span> higher than the next character.<br><br>
+            When weighted by relationship strength,<br>
+            Marpa rises from 3rd to 2nd,<br>
+            Maitrīpa from outside the top 10 to 3rd.
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <img src="network_output/02_char_betweenness.png" alt="Character network — betweenness centrality">
+        <div class="chart-caption">Character network scaled to betweenness centrality. The gap between Milarepa and the rest is visible in node size.</div>
+      </div>
+
+      <div class="prose">
+        <p>Milarepa's unweighted betweenness of 0.6526 means that roughly 65 percent of all shortest paths between any two characters in the graph pass through him. The next-highest figure, Rechungpa, controls 7.9 percent. When edge weights are applied, penalizing paths through rarely co-occurring pairs, Marpa rises from third to second (0.172) and Maitrīpa moves from outside the top ten to third (0.134). This indicates that their relationships, though fewer in raw count, carry more weight than the unweighted ranking reflects.</p>
+        <p>In the place graph, Ü Tsang holds the highest betweenness at 0.183, above Drin (0.145) and Lhodrak (0.111). Despite ranking lower in degree and PageRank than those two sites, Ü Tsang controls a higher share of shortest paths between place clusters.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 3. Shortest Paths ─────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis III</div>
+      <h2>Shortest Paths</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>The shortest path between two nodes is the minimum number of co-occurrence hops required to connect them. Distance 1 means the pair shares at least one text unit directly. Distance 2 means they do not but share a mutual neighbor.</p>
+      </div>
+
+      <div class="path-list">
+        <div class="path-item">
+          <span class="path-pair">Milarepa ↔ Marpa</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Milarepa ↔ Rechungpa Dorjé Drak</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Milarepa ↔ Dakmema</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Milarepa ↔ Seban Repa</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Milarepa ↔ Nāropa</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Marpa ↔ Rechungpa Dorjé Drak</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Marpa ↔ Nāropa</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Dakmema ↔ Rechungpa Dorjé Drak</span>
+          <span class="path-dist" style="color:#888;">distance 2</span>
+          <span class="path-route">Dakmema → Milarepa → Rechungpa</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Milarepa ↔ Peta Gönkyi</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+        <div class="path-item">
+          <span class="path-pair">Milarepa ↔ Nyangtsa Kargyen</span>
+          <span class="path-dist">distance 1</span>
+          <span class="path-route">direct</span>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>Most major character pairs in the table are at distance 1 from Milarepa, meaning they share at least one text unit directly. The one distance-2 pair in the listed set, Dakmema and Rechungpa Dorjé Drak, has no direct shared text unit, so the shortest path routes through Milarepa.</p>
+        <p>The Milarepa–Marpa and Milarepa–Nāropa edges are distance 1 even though Marpa and Nāropa are absent from most of the text's later chapters. Co-occurrence is measured by shared tagging within passages, which includes passages where a figure is referenced or invoked, not only where they are physically present as actors.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 4. Closeness ─────────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis IV</div>
+      <h2>Closeness Centrality</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>Closeness is the inverse of average shortest-path distance from a node to all others. A high closeness score means a node can reach every other node in few hops. It is globally near, not just locally dense.</p>
+      </div>
+
+      <div class="table-row">
+        <div class="table-block">
+          <div class="table-caption">Characters — closeness centrality</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Character</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Milarepa</td><td class="num">0.9605</td></tr>
+              <tr><td class="rank">2</td><td>Rechungpa Dorjé Drak</td><td class="num">0.6518</td></tr>
+              <tr><td class="rank">3</td><td>Marpa</td><td class="num">0.6186</td></tr>
+              <tr><td class="rank">4</td><td>Dampa Gyakpuwa</td><td class="num">0.5840</td></tr>
+              <tr><td class="rank">5</td><td>Seban Repa</td><td class="num">0.5748</td></tr>
+              <tr><td class="rank">6</td><td>Repa Zhiwa Ö</td><td class="num">0.5748</td></tr>
+              <tr><td class="rank">7</td><td>Nyangtsa Kargyen</td><td class="num">0.5748</td></tr>
+              <tr><td class="rank">8</td><td>Drigom Repa</td><td class="num">0.5703</td></tr>
+              <tr><td class="rank">9</td><td>Ngandzong Repa</td><td class="num">0.5703</td></tr>
+              <tr><td class="rank">10</td><td>Shengom Repa</td><td class="num">0.5615</td></tr>
+              <tr><td class="rank">11</td><td>Dakmema</td><td class="num">0.5530</td></tr>
+              <tr><td class="rank">12</td><td>Repa Sangyé Kyap</td><td class="num">0.5530</td></tr>
+              <tr><td class="rank">13</td><td>Maitrīpa</td><td class="num">0.5407</td></tr>
+              <tr><td class="rank">14</td><td>Nāropa</td><td class="num">0.5368</td></tr>
+              <tr><td class="rank">15</td><td>Peta Gönkyi</td><td class="num">0.5407</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-block">
+          <div class="table-caption">Places — closeness centrality</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Place</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Drin</td><td class="num">0.6439</td></tr>
+              <tr><td class="rank">2</td><td>Lapchi Gangra</td><td class="num">0.6377</td></tr>
+              <tr><td class="rank">3</td><td>Nyanam</td><td class="num">0.5815</td></tr>
+              <tr><td class="rank">4</td><td>Chubar</td><td class="num">0.5789</td></tr>
+              <tr><td class="rank">5</td><td>Dröpa Puk</td><td class="num">0.5665</td></tr>
+              <tr><td class="rank">6</td><td>Lhodrak</td><td class="num">0.5641</td></tr>
+              <tr><td class="rank">7</td><td>Ü Tsang</td><td class="num">0.5546</td></tr>
+              <tr><td class="rank">8</td><td>Drowolung</td><td class="num">0.5523</td></tr>
+              <tr><td class="rank">9</td><td>Gang Tisé</td><td class="num">0.5523</td></tr>
+              <tr><td class="rank">10</td><td>Drakar Taso</td><td class="num">0.5500</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <img src="network_output/03_char_closeness.png" alt="Character network — closeness centrality">
+        <div class="chart-caption">Character network scaled to closeness centrality.</div>
+      </div>
+
+      <div class="prose">
+        <p>Milarepa's closeness of 0.961 means that on average he is separated from any other node by just over one hop. The score drops to 0.652 for Rechungpa and 0.619 for Marpa. Ranks four through fifteen fall within a narrow band between 0.537 and 0.584, including figures from different parts of the text such as Repa disciples, family members, and lineage ancestors who appear only in invocation. This compression reflects the graph's small diameter. With a maximum path length of 3, second-order closeness scores converge once the top cluster is set aside.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 5. Eccentricity ──────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis V</div>
+      <h2>Eccentricity</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>Eccentricity is the maximum shortest-path distance from a node to any other node in the graph. Low eccentricity indicates structural centrality and high eccentricity indicates peripherality. The diameter is the maximum eccentricity across all nodes and the radius is the minimum.</p>
+      </div>
+
+      <div class="stat-row" style="margin-top: 16px;">
+        <div class="stat-card">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Diameter</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">2</div>
+          <div class="stat-label">Radius</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">4</div>
+          <div class="stat-label">Center nodes (ecc = 2)</div>
+        </div>
+      </div>
+
+      <div class="table-row" style="margin-top: 8px;">
+        <div class="table-block">
+          <div class="table-caption">Center — eccentricity 2 (structurally central)</div>
+          <table class="data-table">
+            <thead><tr><th>Character</th><th class="num">Eccentricity</th></tr></thead>
+            <tbody>
+              <tr><td class="highlight">Milarepa</td><td class="num">2</td></tr>
+              <tr><td>Rechungpa Dorjé Drak</td><td class="num">2</td></tr>
+              <tr><td>Mila Dorjé Sengé</td><td class="num">2</td></tr>
+              <tr><td>Nyangtsa Kargyen</td><td class="num">2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-block">
+          <div class="table-caption">Periphery — eccentricity 3 (selected)</div>
+          <table class="data-table">
+            <thead><tr><th>Character</th><th class="num">Eccentricity</th></tr></thead>
+            <tbody>
+              <tr><td class="highlight">Marpa</td><td class="num">3</td></tr>
+              <tr><td>Dakmema</td><td class="num">3</td></tr>
+              <tr><td>Nāropa</td><td class="num">3</td></tr>
+              <tr><td>Tilopa</td><td class="num">3</td></tr>
+              <tr><td>Maitrīpa</td><td class="num">3</td></tr>
+              <tr><td>Akṣobhya</td><td class="num">3</td></tr>
+              <tr><td>Drigom Repa</td><td class="num">3</td></tr>
+              <tr><td>Seban Repa</td><td class="num">3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>Only four characters have eccentricity 2, the minimum in this graph. They are Milarepa, Rechungpa Dorjé Drak, Mila Dorjé Sengé, and Nyangtsa Kargyen. This means each of them can reach every other node within two hops. The majority of characters, including Marpa, Nāropa, Tilopa, Dakmema, and all four main Repa disciples, have eccentricity 3, meaning at least one other node is three hops away from them.</p>
+        <p>The graph's diameter is 3 (no pair requires more than three steps) and its radius is 2 (the most central nodes need at most two). Characters in the periphery with eccentricity 3 include both high-degree figures like Marpa and Seban Repa and lower-degree figures like Tilopa and Akṣobhya. The shared property is that each has at least one node it cannot reach in two hops, not that they are infrequently mentioned.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 6. Clustering ────────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis VI</div>
+      <h2>Clustering Coefficient</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>The (weighted) clustering coefficient of a node measures the fraction of its neighbors that are also neighbors of each other. High clustering indicates embeddedness in a tight, mutually connected group such as a disciple circle, a family unit, or a lineage cluster. Low clustering despite high degree is the signature of a structural broker.</p>
+      </div>
+
+      <div class="table-row">
+        <div class="table-block">
+          <div class="table-caption">Highest clustering — tight communities</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Character</th><th class="num">Coeff.</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td>Dewa Kyong</td><td class="num">0.347</td></tr>
+              <tr><td class="rank">2</td><td>Geshé Tsakpuwa</td><td class="num">0.109</td></tr>
+              <tr><td class="rank">3</td><td>Ngandzong Repa</td><td class="num">0.066</td></tr>
+              <tr><td class="rank">4</td><td>Drigom Repa</td><td class="num">0.065</td></tr>
+              <tr><td class="rank">5</td><td>Repa Zhiwa Ö</td><td class="num">0.059</td></tr>
+              <tr><td class="rank">6</td><td>Seban Repa</td><td class="num">0.059</td></tr>
+              <tr><td class="rank">7</td><td>Ngokpa</td><td class="num">0.034</td></tr>
+              <tr><td class="rank">8</td><td>Tsangnyön Heruka</td><td class="num">0.029</td></tr>
+              <tr><td class="rank">9</td><td>Peta Gönkyi</td><td class="num">0.029</td></tr>
+              <tr><td class="rank">10</td><td>Bari Lotsawa</td><td class="num">0.025</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-block">
+          <div class="table-caption">Low clustering, high degree — structural brokers</div>
+          <table class="data-table">
+            <thead><tr><th>Character</th><th class="num">Degree</th><th class="num">Clust.</th></tr></thead>
+            <tbody>
+              <tr><td class="highlight">Milarepa</td><td class="num">72</td><td class="num">0.007</td></tr>
+              <tr><td>Rechungpa Dorjé Drak</td><td class="num">36</td><td class="num">0.019</td></tr>
+              <tr><td>Marpa</td><td class="num">31</td><td class="num">0.013</td></tr>
+              <tr><td>Dampa Gyakpuwa</td><td class="num">22</td><td class="num">0.002</td></tr>
+              <tr><td>Nyangtsa Kargyen</td><td class="num">19</td><td class="num">0.009</td></tr>
+              <tr><td>Shengom Repa</td><td class="num">18</td><td class="num">0.002</td></tr>
+              <tr><td>Repa Sangyé Kyap</td><td class="num">16</td><td class="num">0.003</td></tr>
+              <tr><td>Yungdrung Gyaltsen</td><td class="num">14</td><td class="num">0.012</td></tr>
+              <tr><td>Maitrīpa</td><td class="num">13</td><td class="num">0.004</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>Dewa Kyong's clustering coefficient of 0.347 is the highest in the graph, more than three times the next figure's (Geshé Tsakpuwa at 0.109). Ngandzong Repa, Drigom Repa, Seban Repa, and Repa Zhiwa Ö score between 0.059 and 0.066, the highest values among characters with more than 15 neighbors. All four are mutually connected to each other in the graph, meaning every pair among them shares at least one direct edge.</p>
+        <p>Milarepa's coefficient of 0.007 means fewer than one percent of his 72 neighbors are directly connected to each other. Marpa (0.013) and Rechungpa (0.019) are similarly low. In general, the characters with the highest degree scores have the lowest clustering coefficients, indicating their connections span distinct groups that share few edges among themselves.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 7. PageRank ──────────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis VII</div>
+      <h2>PageRank</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>PageRank assigns scores by propagating prestige. A node scores highly if it is connected to other high-scoring nodes. Unlike degree, it is not fooled by raw volume. A figure mentioned briefly by many important characters may rank above one mentioned frequently by minor ones.</p>
+      </div>
+
+      <div class="table-row">
+        <div class="table-block">
+          <div class="table-caption">Characters — PageRank (weighted)</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Character</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Milarepa</td><td class="num">0.1716</td></tr>
+              <tr><td class="rank">2</td><td>Repa Zhiwa Ö</td><td class="num">0.0802</td></tr>
+              <tr><td class="rank">3</td><td>Seban Repa</td><td class="num">0.0802</td></tr>
+              <tr><td class="rank">4</td><td>Ngandzong Repa</td><td class="num">0.0798</td></tr>
+              <tr><td class="rank">5</td><td>Drigom Repa</td><td class="num">0.0789</td></tr>
+              <tr><td class="rank">6</td><td>Rechungpa Dorjé Drak</td><td class="num">0.0678</td></tr>
+              <tr><td class="rank">7</td><td class="highlight">Marpa</td><td class="num">0.0517</td></tr>
+              <tr><td class="rank">8</td><td>Dewa Kyong</td><td class="num">0.0368</td></tr>
+              <tr><td class="rank">9</td><td>Dakmema</td><td class="num">0.0359</td></tr>
+              <tr><td class="rank">10</td><td>Peta Gönkyi</td><td class="num">0.0267</td></tr>
+              <tr><td class="rank">11</td><td>Khyungtsa Paldren</td><td class="num">0.0185</td></tr>
+              <tr><td class="rank">12</td><td>Nyangtsa Kargyen</td><td class="num">0.0171</td></tr>
+              <tr><td class="rank">13</td><td>Yungdrung Gyaltsen</td><td class="num">0.0109</td></tr>
+              <tr><td class="rank">14</td><td>Ngokpa</td><td class="num">0.0109</td></tr>
+              <tr><td class="rank">15</td><td>Nāropa</td><td class="num">0.0071</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-block">
+          <div class="table-caption">Places — PageRank (weighted)</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Place</th><th class="num">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Drin</td><td class="num">0.0745</td></tr>
+              <tr><td class="rank">2</td><td class="highlight">Lhodrak</td><td class="num">0.0519</td></tr>
+              <tr><td class="rank">3</td><td>Driché Puk</td><td class="num">0.0427</td></tr>
+              <tr><td class="rank">4</td><td>Drowolung</td><td class="num">0.0348</td></tr>
+              <tr><td class="rank">5</td><td>Kyangatsa</td><td class="num">0.0312</td></tr>
+              <tr><td class="rank">6</td><td>Kyipuk Nyima Dzong</td><td class="num">0.0310</td></tr>
+              <tr><td class="rank">7</td><td>Dingri</td><td class="num">0.0299</td></tr>
+              <tr><td class="rank">8</td><td>Drakar Taso</td><td class="num">0.0276</td></tr>
+              <tr><td class="rank">9</td><td>Üma Dzong</td><td class="num">0.0246</td></tr>
+              <tr><td class="rank">10</td><td>Chubar</td><td class="num">0.0236</td></tr>
+              <tr><td class="rank">11</td><td>Orma Triangle</td><td class="num">0.0212</td></tr>
+              <tr><td class="rank">12</td><td>Kazhi Dunggyé</td><td class="num">0.0211</td></tr>
+              <tr><td class="rank">13</td><td>Lapchi Gangra</td><td class="num">0.0184</td></tr>
+              <tr><td class="rank">14</td><td>Yarlung</td><td class="num">0.0150</td></tr>
+              <tr><td class="rank">15</td><td>Chölagang</td><td class="num">0.0141</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <img src="network_output/04_char_pagerank.png" alt="Character network — PageRank">
+        <div class="chart-caption">Character network scaled to PageRank. The four Repa disciples visibly cluster at similar sizes near Milarepa.</div>
+      </div>
+
+      <div class="prose">
+        <p>The four Repa disciples (Repa Zhiwa Ö, Seban Repa, Ngandzong Repa, and Drigom Repa) score between 0.0789 and 0.0802, ranking second through fifth. They score above Rechungpa (0.0678) and Marpa (0.0517), despite both of those characters having higher degree scores. PageRank redistributes scores based on neighbor prestige, and the Repa disciples are each connected to Milarepa (the top-scoring node) and to each other.</p>
+        <p>In the place graph, Lhodrak ranks second at 0.0519, above its degree centrality rank of sixth. Drin leads at 0.0745. The divergence between degree and PageRank rankings for several places shows that connection count and neighbor prestige do not always align in this graph.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 8. Weighted Graph ─────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis VIII</div>
+      <h2>Weighted Relationships</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>Edge weight equals the number of text units in which both nodes are co-tagged. High weight is not mere frequency. It reflects the sustained, repeated presence of two figures in the same textual space. A weight of 700 means those two nodes shared 700 distinct passages.</p>
+      </div>
+
+      <div class="table-caption" style="margin-bottom: 8px;">Top 20 character pairings by co-occurrence weight</div>
+      <table class="data-table pair-table" style="margin-bottom: 24px;">
+        <thead><tr><th class="rank">#</th><th>Character A</th><th></th><th>Character B</th><th class="num">Weight</th></tr></thead>
+        <tbody>
+          <tr><td class="rank">1</td><td>Ngandzong Repa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Repa Zhiwa Ö</td><td class="weight">708</td></tr>
+          <tr><td class="rank">2</td><td>Drigom Repa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Ngandzong Repa</td><td class="weight">699</td></tr>
+          <tr><td class="rank">3</td><td>Drigom Repa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Seban Repa</td><td class="weight">698</td></tr>
+          <tr><td class="rank">4</td><td>Ngandzong Repa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Seban Repa</td><td class="weight">698</td></tr>
+          <tr><td class="rank">5</td><td>Drigom Repa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Repa Zhiwa Ö</td><td class="weight">696</td></tr>
+          <tr><td class="rank">6</td><td>Seban Repa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Repa Zhiwa Ö</td><td class="weight">695</td></tr>
+          <tr><td class="rank">7</td><td class="highlight">Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td class="highlight">Marpa</td><td class="weight">692</td></tr>
+          <tr><td class="rank">8</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Ngandzong Repa</td><td class="weight">460</td></tr>
+          <tr><td class="rank">9</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Seban Repa</td><td class="weight">460</td></tr>
+          <tr><td class="rank">10</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Repa Zhiwa Ö</td><td class="weight">458</td></tr>
+          <tr><td class="rank">11</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Dakmema</td><td class="weight">458</td></tr>
+          <tr><td class="rank">12</td><td>Ngandzong Repa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Rechungpa Dorjé Drak</td><td class="weight">456</td></tr>
+          <tr><td class="rank">13</td><td>Rechungpa Dorjé Drak</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Seban Repa</td><td class="weight">455</td></tr>
+          <tr><td class="rank">14</td><td>Rechungpa Dorjé Drak</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Repa Zhiwa Ö</td><td class="weight">453</td></tr>
+          <tr><td class="rank">15</td><td>Marpa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Dakmema</td><td class="weight">452</td></tr>
+          <tr><td class="rank">16</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Drigom Repa</td><td class="weight">449</td></tr>
+          <tr><td class="rank">17</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Peta Gönkyi</td><td class="weight">337</td></tr>
+          <tr><td class="rank">18</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Rechungpa Dorjé Drak</td><td class="weight">322</td></tr>
+          <tr><td class="rank">19</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Khyungtsa Paldren</td><td class="weight">173</td></tr>
+          <tr><td class="rank">20</td><td>Milarepa</td><td style="color:#bbb; font-size:0.8rem;">↔</td><td>Dewa Kyong</td><td class="weight">165</td></tr>
+        </tbody>
+      </table>
+
+      <div class="prose">
+        <p>The six highest-weight pairings are all between the four Repa disciples (Ngandzong, Drigom, Seban, and Repa Zhiwa Ö) with weights ranging from 695 to 708. The Milarepa–Marpa pairing ranks seventh at 692. A weight of 692 means those two nodes were co-tagged in 692 distinct text units.</p>
+        <p>There is a sharp drop from rank 7 (692) to rank 8 (460). Ranks 8 through 16 range from 449 to 460, a tight band that includes all four of Milarepa's pairings with the Repa disciples and his pairing with Dakmema. Ranks 17 through 20 fall between 165 and 337.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 9. Temporal ──────────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis IX</div>
+      <h2>Temporal Evolution</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>Each chapter functions as a temporal slice. Building a separate co-occurrence graph per chapter and tracking centrality scores across those slices shows how the network's center of gravity shifts across the narrative arc.</p>
+      </div>
+
+      <table class="data-table temporal-table" style="margin-bottom: 24px;">
+        <thead>
+          <tr>
+            <th>Ch</th>
+            <th>Phase</th>
+            <th class="num">Units</th>
+            <th class="num">Characters</th>
+            <th class="num">Places</th>
+            <th>Top PageRank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>Framing</td><td class="num">20</td><td class="num">3</td><td class="num">0</td><td class="top-pr">Milarepa, Tsangnyön Heruka, Marpa</td></tr>
+          <tr><td>1</td><td>Early Life</td><td class="num">37</td><td class="num">28</td><td class="num">9</td><td class="top-pr">Milarepa, Rechungpa, Mila Sherab Gyaltsen</td></tr>
+          <tr><td>2</td><td>Revenge</td><td class="num">25</td><td class="num">9</td><td class="num">5</td><td class="top-pr">Milarepa, Nyangtsa Kargyen, Peta Gönkyi</td></tr>
+          <tr><td>3</td><td>Apprenticeship (Marpa)</td><td class="num">90</td><td class="num">13</td><td class="num">27</td><td class="top-pr">Milarepa, Nyangtsa Kargyen, Yungtön Trogyal</td></tr>
+          <tr><td>4</td><td>Austerities</td><td class="num">50</td><td class="num">6</td><td class="num">11</td><td class="top-pr">Milarepa, Marpa, Yungtön Trogyal</td></tr>
+          <tr><td>5</td><td>Meditation</td><td class="num">202</td><td class="num">11</td><td class="num">17</td><td class="top-pr">Milarepa, Marpa, Dakmema</td></tr>
+          <tr><td>6</td><td>Solitary Practice</td><td class="num">22</td><td class="num">6</td><td class="num">3</td><td class="top-pr">Milarepa, Marpa, Ngokpa</td></tr>
+          <tr><td>7</td><td>Enlightenment</td><td class="num">247</td><td class="num">11</td><td class="num">11</td><td class="top-pr">Milarepa, Marpa, Dakmema</td></tr>
+          <tr><td>8</td><td>Teaching Begins</td><td class="num">223</td><td class="num">15</td><td class="num">25</td><td class="top-pr">Milarepa, Marpa, Dakmema</td></tr>
+          <tr><td>9</td><td>Disciple Encounters</td><td class="num">126</td><td class="num">12</td><td class="num">5</td><td class="top-pr">Milarepa, Nyangtsa Kargyen, Mila Sherab Gyaltsen</td></tr>
+          <tr><td>10</td><td>Wandering &amp; Teaching</td><td class="num">665</td><td class="num">13</td><td class="num">22</td><td class="top-pr">Milarepa, Peta Gönkyi, Khyungtsa Paldren</td></tr>
+          <tr><td>11</td><td>Later Disciples</td><td class="num">32</td><td class="num">35</td><td class="num">76</td><td class="top-pr">Milarepa, Rechungpa, Seban Repa</td></tr>
+          <tr><td>12</td><td>Final Teachings</td><td class="num" style="color:crimson;">880</td><td class="num">15</td><td class="num">17</td><td class="top-pr" style="color:crimson;">Repa Zhiwa Ö, Drigom Repa, Ngandzong Repa</td></tr>
+          <tr><td>13</td><td>Death &amp; Colophon</td><td class="num">28</td><td class="num">3</td><td class="num">1</td><td class="top-pr">Rupé Gyenchen, Milarepa</td></tr>
+        </tbody>
+      </table>
+
+      <div class="chart-wrap">
+        <img src="network_output/08_temporal_counts.png" alt="Temporal counts — text units and characters per chapter">
+        <div class="chart-caption">Text units, unique characters, and unique locations per chapter. Chapter 12 dominates in volume; Chapter 11 in geographic and character breadth.</div>
+      </div>
+
+      <div class="chart-wrap">
+        <img src="network_output/09_temporal_centrality.png" alt="Degree centrality per chapter for key characters">
+        <div class="chart-caption">Degree centrality per chapter for six key characters. Marpa's early dominance and the Repa disciples' late entry are both visible.</div>
+      </div>
+
+      <div class="prose">
+        <p>Chapter 12 contains 880 text units, more than any other chapter and more than chapters 1 through 9 combined. It is also the only chapter where Milarepa does not lead PageRank. Repa Zhiwa Ö, Drigom Repa, and Ngandzong Repa rank first through third in that chapter's slice. Chapter 11 has the highest character count (35) and place count (76) of any chapter but only 32 text units, tied with Chapter 0 for the lowest text-unit count. Chapter 11's character and place counts are high because each figure in that chapter tends to appear in its own short passage, rather than sharing passages with others.</p>
+        <p>Marpa appears in the top PageRank positions for chapters 4 through 8, then drops from the top positions entirely from chapter 9 onward. The degree centrality chart shows that drop as a decline across the mid-narrative chapters. Milarepa holds the top PageRank position in every chapter except 12.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 10. Place Network ─────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis X</div>
+      <h2>Place Network</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>Two places are connected when they appear in the same text unit. The resulting network encodes geographic co-citation. Sites that are mentioned together in narrative or song become neighbors. The character–place bipartite data adds a second layer showing which figures are most strongly associated with which sites.</p>
+      </div>
+
+      <div class="chart-wrap">
+        <img src="network_output/05_place_pagerank.png" alt="Place network — PageRank">
+        <div class="chart-caption">Place co-occurrence network scaled to PageRank. Drin anchors the center; Lhodrak forms a secondary cluster to the lower left.</div>
+      </div>
+
+      <div class="chart-wrap">
+        <img src="network_output/10_char_place_heatmap.png" alt="Character × place co-occurrence heatmap">
+        <div class="chart-caption">Heatmap of co-occurrence weight between the top 20 characters and top 20 places. The Repa Quartet's concentration at Drin and Driché Puk is visible as the red band across the upper rows.</div>
+      </div>
+
+      <div class="table-caption" style="margin-bottom: 8px;">Primary place associations by character</div>
+      <table class="data-table" style="margin-bottom: 24px;">
+        <thead><tr><th>Character</th><th>Primary site</th><th class="num">Co-occurrences</th></tr></thead>
+        <tbody>
+          <tr><td class="highlight">Milarepa</td><td>Drin</td><td class="num">575</td></tr>
+          <tr><td>Seban Repa</td><td>Drin</td><td class="num">619</td></tr>
+          <tr><td>Ngandzong Repa</td><td>Drin</td><td class="num">618</td></tr>
+          <tr><td>Drigom Repa</td><td>Drin</td><td class="num">618</td></tr>
+          <tr><td>Repa Zhiwa Ö</td><td>Drin</td><td class="num">616</td></tr>
+          <tr><td class="highlight">Marpa</td><td>Lhodrak</td><td class="num">588</td></tr>
+          <tr><td>Dakmema</td><td>Lhodrak</td><td class="num">425</td></tr>
+          <tr><td>Rechungpa Dorjé Drak</td><td>Drin</td><td class="num">449</td></tr>
+          <tr><td>Peta Gönkyi</td><td>Dingri</td><td class="num">192</td></tr>
+          <tr><td>Nyangtsa Kargyen</td><td>Kyangatsa</td><td class="num">71</td></tr>
+          <tr><td>Khyungtsa Paldren</td><td>Kyangatsa</td><td class="num">104</td></tr>
+          <tr><td>Ngokpa</td><td>Lhodrak</td><td class="num">63</td></tr>
+          <tr><td>Nāropa</td><td>Lhodrak</td><td class="num">19</td></tr>
+        </tbody>
+      </table>
+
+      <div class="prose">
+        <p>Drin is the primary place for five of the thirteen characters in the association table. These are all four Repa disciples and Milarepa himself, with co-occurrence counts between 575 and 619. Lhodrak is the primary site for Marpa (588), Dakmema (425), Ngokpa (63), and Nāropa (19). Rechungpa's highest count is also at Drin (449). Peta Gönkyi's highest association is with Dingri (192), and both Nyangtsa Kargyen and Khyungtsa Paldren are most associated with Kyangatsa (71 and 104 respectively).</p>
+        <p>In the place co-occurrence network, Drin anchors the center with the highest degree and PageRank scores. Lhodrak forms a secondary cluster. The betweenness ranking places Ü Tsang at the top despite it ranking sixth in degree, indicating that it lies on many shortest paths between the two primary clusters.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 11. Dialogue ─────────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Analysis XI</div>
+      <h2>Dialogue Network</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>In Songs, Letters, and Prayers, the dataset distinguishes between characters tagged as <em>Explicit</em> (active singer or writer) and those tagged as <em>Referenced</em> or <em>Implicit</em> (addressed, invoked, or implied). I drew a directed edge from speaker to addressed party, weighted by co-occurrence. The result is an asymmetric speech graph showing who speaks to whom, and how often.</p>
+      </div>
+
+      <div class="dialogue-wrap">
+        <div class="dialogue-block">
+          <div class="table-caption">Top speakers — out-degree (weighted)</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Speaker</th><th class="num">Weight</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Milarepa</td><td class="num">715</td></tr>
+              <tr><td class="rank">2</td><td>Rechungpa Dorjé Drak</td><td class="num">247</td></tr>
+              <tr><td class="rank">3</td><td>Repa Zhiwa Ö</td><td class="num">168</td></tr>
+              <tr><td class="rank">4</td><td>Marpa</td><td class="num">57</td></tr>
+              <tr><td class="rank">5</td><td>Khyungtsa Paldren</td><td class="num">32</td></tr>
+              <tr><td class="rank">6</td><td>Peta Gönkyi</td><td class="num">28</td></tr>
+              <tr><td class="rank">7</td><td>Dakmema</td><td class="num">27</td></tr>
+              <tr><td class="rank">8</td><td>Ngandzong Repa</td><td class="num">5</td></tr>
+              <tr><td class="rank">9</td><td>Dewa Kyong</td><td class="num">4</td></tr>
+              <tr><td class="rank">10</td><td>Nāropa</td><td class="num">2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="dialogue-block">
+          <div class="table-caption">Most addressed — in-degree (weighted)</div>
+          <table class="data-table">
+            <thead><tr><th class="rank">#</th><th>Addressed</th><th class="num">Weight</th></tr></thead>
+            <tbody>
+              <tr><td class="rank">1</td><td class="highlight">Marpa</td><td class="num">192</td></tr>
+              <tr><td class="rank">2</td><td>Drigom Repa</td><td class="num">128</td></tr>
+              <tr><td class="rank">3</td><td>Seban Repa</td><td class="num">128</td></tr>
+              <tr><td class="rank">4</td><td>Ngandzong Repa</td><td class="num">127</td></tr>
+              <tr><td class="rank">5</td><td>Milarepa</td><td class="num">126</td></tr>
+              <tr><td class="rank">6</td><td>Dakmema</td><td class="num">123</td></tr>
+              <tr><td class="rank">7</td><td>Peta Gönkyi</td><td class="num">117</td></tr>
+              <tr><td class="rank">8</td><td>Repa Zhiwa Ö</td><td class="num">81</td></tr>
+              <tr><td class="rank">9</td><td>Khyungtsa Paldren</td><td class="num">69</td></tr>
+              <tr><td class="rank">10</td><td>Dewa Kyong</td><td class="num">53</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <img src="network_output/07_dialogue_degree.png" alt="Dialogue network — degree centrality (directed)">
+        <div class="chart-caption">Directed dialogue network. Arrow direction follows speaker → addressed. Milarepa is the dominant source node.</div>
+      </div>
+
+      <div class="table-caption" style="margin-bottom: 8px;">Dialogue PageRank — prestige by being spoken to by high-prestige speakers</div>
+      <table class="data-table" style="max-width: 380px; margin-bottom: 24px;">
+        <thead><tr><th class="rank">#</th><th>Character</th><th class="num">Score</th></tr></thead>
+        <tbody>
+          <tr><td class="rank">1</td><td class="highlight">Milarepa</td><td class="num">0.1540</td></tr>
+          <tr><td class="rank">2</td><td class="highlight">Marpa</td><td class="num">0.1179</td></tr>
+          <tr><td class="rank">3</td><td>Dakmema</td><td class="num">0.0914</td></tr>
+          <tr><td class="rank">4</td><td>Drigom Repa</td><td class="num">0.0623</td></tr>
+          <tr><td class="rank">5</td><td>Seban Repa</td><td class="num">0.0623</td></tr>
+          <tr><td class="rank">6</td><td>Peta Gönkyi</td><td class="num">0.0542</td></tr>
+          <tr><td class="rank">7</td><td>Ngandzong Repa</td><td class="num">0.0532</td></tr>
+          <tr><td class="rank">8</td><td>Rechungpa Dorjé Drak</td><td class="num">0.0449</td></tr>
+          <tr><td class="rank">9</td><td>Repa Zhiwa Ö</td><td class="num">0.0443</td></tr>
+          <tr><td class="rank">10</td><td>Khyungtsa Paldren</td><td class="num">0.0416</td></tr>
+        </tbody>
+      </table>
+
+      <div class="prose">
+        <p>Milarepa's out-degree weight of 715 means he is tagged as an explicit speaker in 715 weighted text units. Rechungpa follows at 247 and Repa Zhiwa Ö at 168. No other character exceeds 60. In the in-degree table, Marpa receives the highest weight at 192, above Drigom Repa and Seban Repa (both 128), Ngandzong Repa (127), and Milarepa (126). Marpa thus ranks first among characters most often addressed and fourth among characters who speak, a gap between those two positions larger than for any other character in the graph.</p>
+        <p>In the dialogue PageRank table, Milarepa ranks first (0.1540) and Marpa second (0.1179). Dakmema ranks third at 0.0914, above all the main disciples. PageRank in this directed graph scores a node by how much it is addressed by other high-scoring speakers.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── Conclusions ───────────────────────────────────── -->
+    <div class="section">
+      <div class="section-label">Conclusions</div>
+      <h2>What the network finds</h2>
+
+      <div class="prose" style="margin-top: 14px;">
+        <p>Milarepa holds the top position in every character metric (degree, betweenness, closeness, PageRank, and dialogue out-degree), with the single exception of Chapter 12's per-chapter PageRank, where the Repa Quartet leads. His degree centrality (0.973) and betweenness (0.653) are substantially higher than any other character. He is one of four nodes in the center of the eccentricity graph, and the only node with both near-maximum closeness and near-zero clustering.</p>
+        <p>Marpa's scores differ considerably across metrics. In unweighted betweenness he ranks third and in weighted betweenness he rises to second. In eccentricity he sits in the periphery at 3. In dialogue in-degree he ranks first, above all characters including Milarepa. These differences reflect what each metric measures. Eccentricity captures maximum distance, betweenness captures path routing, and dialogue in-degree captures direct address.</p>
+        <p>The four Repa disciples (Ngandzong, Drigom, Seban, and Repa Zhiwa Ö) hold the six highest pairwise edge weights in the character network and the highest clustering coefficients among high-degree nodes. Their PageRank scores cluster within a narrow band (0.0789–0.0802). Chapter 12, where they co-appear throughout, is the longest chapter in the text by text unit count.</p>
+        <p>The place network has two primary clusters by most metrics. Drin and Lhodrak both score at the top across degree, closeness, and PageRank, with Drin leading in all three. Lhodrak ranks above its degree position in PageRank. Ü Tsang leads in betweenness despite ranking sixth in degree, connecting sub-clusters that the two primary sites do not bridge directly.</p>
+      </div>
+    </div>
+
+  
+
+  </div>
+</body>
+</html>
